@@ -1,23 +1,27 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   pipex.h                                            :+:      :+:    :+:   */
+/*   error.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: alexanfe <alexanfe@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/11/26 21:46:16 by alexanfe          #+#    #+#             */
-/*   Updated: 2024/11/26 21:46:22 by alexanfe         ###   ########.fr       */
+/*   Created: 2024/12/11 02:06:30 by alexanfe          #+#    #+#             */
+/*   Updated: 2024/12/11 02:06:32 by alexanfe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef PIPEX_H
-# define PIPEX_H
+#include <stdio.h>
+#include <stdlib.h>
 
-# include <unistd.h>
+// TODO change printf
+void	usage_error(void)
+{
+	printf("Usage: ./pipex file1 cmd1 cmd2 file2\n");
+	exit(EXIT_FAILURE);
+}
 
-void	usage_error(void);
-void	exit_error(char *error_msg);
-char	**argsgen(char *command);
-void	write_end(char *file_path, char *command, int pipe_end);
-void	read_end(char *file_path, char *command, int pipe_end);
-#endif
+void	exit_error(char *error_msg)
+{
+	perror(error_msg);
+	exit(EXIT_FAILURE);
+}

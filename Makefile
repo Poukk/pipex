@@ -1,6 +1,8 @@
 #------------------ Config -----------------#
 NAME = pipex
-SRCS = $(SRCDIR)/main.c
+SRCS = $(SRCDIR)/main.c \
+       $(SRCDIR)/error.c \
+       $(SRCDIR)/exec.c
 
 #---------------- Variables ----------------#
 CC = cc
