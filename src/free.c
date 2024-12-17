@@ -1,27 +1,22 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   pipex.h                                            :+:      :+:    :+:   */
+/*   free.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: alexanfe <alexanfe@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/11/26 21:46:16 by alexanfe          #+#    #+#             */
-/*   Updated: 2024/11/26 21:46:22 by alexanfe         ###   ########.fr       */
+/*   Created: 2024/12/12 06:30:30 by alexanfe          #+#    #+#             */
+/*   Updated: 2024/12/12 06:31:04 by alexanfe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef PIPEX_H
-# define PIPEX_H
+#include <stdlib.h>
 
-# include <unistd.h>
+void	free_split(char **splited)
+{
+	int	i;
 
-void	usage_error(void);
-void	exit_error(char *error_msg);
-
-void	write_end(char *file_path, char *command, int pipe_end);
-void	read_end(char *file_path, char *command, int pipe_end);
-
-
-char	**ft_split(char const *s, char c);
-void	free_split(char **splited);
-#endif
+	i = 0;
+	while(splited[i] != NULL)
+		free(splited[i++]);
+}

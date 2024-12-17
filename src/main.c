@@ -32,7 +32,5 @@ int	main(int argc, char *argv[])
 	close(pfd[1]);
 	waitpid(pid1, NULL, 0);
 	waitpid(pid2, &status, 0);
-	if(WEXITSTATUS(status))
-		exit(WEXITSTATUS(status));
-	exit(EXIT_SUCCESS);
+	exit(WEXITSTATUS(status));
 }

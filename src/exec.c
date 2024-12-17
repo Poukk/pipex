@@ -10,8 +10,6 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <stdio.h>
-#include <stdlib.h>
 #include <fcntl.h>
 #include <unistd.h>
 #include <sys/types.h>
@@ -20,24 +18,9 @@
 
 extern char	**environ;
 
-char	**argsgen(char *command)
-{
-	char	**args;
-
-	args = malloc(4 * sizeof(char *));
-	if (args == NULL)
-	{
-		perror("malloc failed");
-		exit(EXIT_FAILURE);
-	}
-	args[0] = "/bin/sh";
-	args[1] = "-c";
-	args[2] = command;
-	args[3] = NULL;
-	return (args);
-}
 void	write_end(char *file_path, char *command, int pipe_end)
 {
+	char **splited_command;
 	int file;
 
 	file = open(file_path, O_RDONLY);
@@ -51,12 +34,15 @@ void	write_end(char *file_path, char *command, int pipe_end)
 		exit_error("write_end - dup2");
 	if (close(pipe_end) < 0)
 		exit_error("write_end - close");
-	execve("/bin/sh", argsgen(command), environ);
+	splited_command = ft_split(command, ' ');
+	execve(splited_command[0], (splited_command + 1), environ);
+	free_split(splited_command);
 	exit_error("write_end - execve");
 }
 
 void	read_end(char *file_path, char *command, int pipe_end)
 {
+	char **splited_command;
 	int file;
 
 	file = open(file_path, O_WRONLY | O_CREAT | O_TRUNC, 0644);
@@ -70,6 +56,8 @@ void	read_end(char *file_path, char *command, int pipe_end)
 		exit_error("read_end - dup2");
 	if (close(file) < 0)
 		exit_error("read_end - close");
-	execve("/bin/sh", argsgen(command), environ);
+	splited_command = ft_split(command, ' ');
+	execve(splited_command[0], (splited_command + 1), environ);
+	free_split(splited_command);
 	exit_error("read_end - execve");
 }
