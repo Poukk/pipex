@@ -18,8 +18,7 @@
 void	usage_error(void);
 void	exit_error(char *error_msg);
 
-void	write_end(char *file_path, char *command, int pipe_end);
-void	read_end(char *file_path, char *command, int pipe_end);
+void	fork_and_execute(char *argv[], int *pfd, int i, int argc);
 
 
 char	**ft_split(char const *s, char c);

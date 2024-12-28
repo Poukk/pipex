@@ -18,46 +18,45 @@
 
 extern char	**environ;
 
-void	write_end(char *file_path, char *command, int pipe_end)
+void	execute_command(char *cmd, int in_fd, int out_fd)
 {
-	char **splited_command;
-	int file;
-
-	file = open(file_path, O_RDONLY);
-	if (file < 0)
-		exit_error("write_end - open");
-	if (dup2(file, STDIN_FILENO) < 0)
-		exit_error("write_end - dup2");
-	if (close(file) < 0)
-		exit_error("write_end - close");
-	if (dup2(pipe_end, STDOUT_FILENO) < 0)
-		exit_error("write_end - dup2");
-	if (close(pipe_end) < 0)
-		exit_error("write_end - close");
-	splited_command = ft_split(command, ' ');
-	execve(splited_command[0], (splited_command + 1), environ);
-	free_split(splited_command);
-	exit_error("write_end - execve");
+	if (dup2(in_fd, STDIN_FILENO) == -1 || dup2(out_fd, STDOUT_FILENO) == -1)
+		exit_error("dup2");
+	close(in_fd);
+	close(out_fd);
+	execlp(cmd, cmd, (char *) NULL);
+	exit_error("execlp");
 }
 
-void	read_end(char *file_path, char *command, int pipe_end)
+void	fork_and_execute(char *argv[], int *pfd, int i, int argc)
 {
-	char **splited_command;
-	int file;
+	pid_t	pid;
 
-	file = open(file_path, O_WRONLY | O_CREAT | O_TRUNC, 0644);
-	if(file < 0)
-		exit_error("read_end - open");
-	if (dup2(pipe_end, STDIN_FILENO) < 0)
-		exit_error("read_end - dup2");
-	if (close(pipe_end) < 0)
-		exit_error("read_end - close");
-	if (dup2(file, STDOUT_FILENO) < 0)
-		exit_error("read_end - dup2");
-	if (close(file) < 0)
-		exit_error("read_end - close");
-	splited_command = ft_split(command, ' ');
-	execve(splited_command[0], (splited_command + 1), environ);
-	free_split(splited_command);
-	exit_error("read_end - execve");
+	pid = fork();
+	if (pid < 0)
+		exit_error("fork");
+	if (pid == 0)
+	{
+		if (i == 0)
+		{
+			int infile = open(argv[1], O_RDONLY);
+			if (infile < 0)
+				exit_error("open infile");
+			close(pfd[0]);
+			execute_command(argv[2], infile, pfd[1]);
+        	}
+		else if (i == argc - 4)
+		{
+			int outfile = open(argv[argc - 1], O_WRONLY | O_CREAT | O_TRUNC, 0644);
+			if (outfile < 0)
+				exit_error("open outfile");
+			close(pfd[2 * (i - 1) + 1]);
+			execute_command(argv[argc - 2], pfd[2 * (i - 1)], outfile);
+        	}
+		else
+		{
+			close(pfd[2 * (i - 1) + 1]);
+			execute_command(argv[i + 2], pfd[2 * (i - 1)], pfd[2 * i + 1]);
+		}
+	}
 }

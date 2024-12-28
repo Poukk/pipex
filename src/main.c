@@ -1,36 +1,74 @@
 #include "pipex.h"
 #include <stdlib.h>
 #include <unistd.h>
+#include <fcntl.h>
 #include <sys/wait.h>
 
-int	main(int argc, char *argv[])
+void	setup_pipes(int *pfd, int num_pipes)
 {
-	int pfd[2];
-	int status;
-	pid_t pid1;
-	pid_t pid2;
+	int	i;
 
-	if (argc != 5)
+	i = 0;
+	while (i < num_pipes)
+	{
+		if (pipe(pfd + 2 * i) < 0)
+			exit_error("pipe");
+		i++;
+	}
+}
+
+void	close_pipes(int *pfd, int num_pipes)
+{
+	int	i;
+
+	i = 0;
+	while (i < num_pipes)
+	{
+		close(pfd[2 * i]);
+		close(pfd[2 * i + 1]);
+		i++;
+	}
+}
+
+void	wait_for_children(int num_children)
+{
+	int	status;
+	int	i;
+
+	i = 0;
+	while(i < num_children)
+	{
+		wait(&status);
+		i++;
+	}
+}
+
+int main(int argc, char *argv[])
+{
+	int	num_pipes;
+	int	*pfd;
+	int	i;
+
+	if (argc < 5)
 		usage_error();
-	if (pipe(pfd) < 0)
-		exit_error("pipe");
-	pid1 = fork();
-	if (pid1 < 0)
-		exit_error("fork");
-	if (pid1 == 0) {
-        	close(pfd[0]);
-        	write_end(argv[1], argv[2], pfd[1]);
+	num_pipes = argc - 4;
+	pfd = malloc(num_pipes * 2 * sizeof(int));
+	if (!pfd)
+        	exit_error("malloc");
+	setup_pipes(pfd, num_pipes);
+	i = 0;
+	while (i< argc -3)
+	{
+        	fork_and_execute(argv, pfd, i, argc);
+		if (i > 0)
+		{
+			close(pfd[2 * (i - 1)]);
+			close(pfd[2 * (i - 1) + 1]);
+		}
+		i++;
 	}
-	pid2 = fork();
-	if (pid2 < 0)
-		exit_error("fork");
-	if (pid2 == 0) {
-		close(pfd[1]);
-		read_end(argv[4], argv[3], pfd[0]);
-	}
-	close(pfd[0]);
-	close(pfd[1]);
-	waitpid(pid1, NULL, 0);
-	waitpid(pid2, &status, 0);
-	exit(WEXITSTATUS(status));
+	close_pipes(pfd, num_pipes);
+	wait_for_children(argc - 3);
+	free(pfd);
+	return 0;
 }
