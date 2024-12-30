@@ -4,7 +4,7 @@ SRCS = $(SRCDIR)/main.c     \
        $(SRCDIR)/error.c    \
        $(SRCDIR)/exec.c     \
        $(SRCDIR)/ft_split.c \
-       $(SRCDIR)/free.c     \
+       $(SRCDIR)/helper.c     \
 
 #---------------- Variables ----------------#
 CC = cc

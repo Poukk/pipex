@@ -28,6 +28,28 @@ void	execute_command(char *cmd, int in_fd, int out_fd)
 	exit_error("execlp");
 }
 
+void	first_command(char *infile_path, char *command, int *pfd)
+{
+	int	infile;
+
+	infile = open(infile_path, O_RDONLY);
+	if (infile < 0)
+		exit_error("open infile");
+	close(pfd[0]);
+	execute_command(command, infile, pfd[1]);
+}
+
+void	last_command(char *outfile_path, char *command, int *pfd, int index)
+{
+	int	outfile;
+
+	outfile = open(outfile_path, O_WRONLY | O_CREAT | O_TRUNC, 0644);
+	if (outfile < 0)
+		exit_error("open outfile");
+	close(pfd[2 * (index - 1) + 1]);
+	execute_command(command, pfd[2 * (index - 1)], outfile);
+}
+
 void	fork_and_execute(char *argv[], int *pfd, int i, int argc)
 {
 	pid_t	pid;
@@ -38,21 +60,9 @@ void	fork_and_execute(char *argv[], int *pfd, int i, int argc)
 	if (pid == 0)
 	{
 		if (i == 0)
-		{
-			int infile = open(argv[1], O_RDONLY);
-			if (infile < 0)
-				exit_error("open infile");
-			close(pfd[0]);
-			execute_command(argv[2], infile, pfd[1]);
-        	}
+			first_command(argv[1], argv[2], pfd);
 		else if (i == argc - 4)
-		{
-			int outfile = open(argv[argc - 1], O_WRONLY | O_CREAT | O_TRUNC, 0644);
-			if (outfile < 0)
-				exit_error("open outfile");
-			close(pfd[2 * (i - 1) + 1]);
-			execute_command(argv[argc - 2], pfd[2 * (i - 1)], outfile);
-        	}
+			last_command(argv[argc - 1], argv[argc - 2], pfd, i);
 		else
 		{
 			close(pfd[2 * (i - 1) + 1]);

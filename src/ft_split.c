@@ -10,29 +10,9 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "pipex.h"
 #include <stddef.h>
 #include <stdlib.h>
-
-static size_t	ft_strlcpy(char *dst, const char *src, size_t size)
-{
-	unsigned int	src_len;
-	unsigned int	i;
-
-	src_len = 0;
-	while (src[src_len] != '\0')
-		src_len++;
-	if (size > 0)
-	{
-		i = 0;
-		while (i < size - 1 && src[i] != '\0')
-		{
-			dst[i] = src[i];
-			i++;
-		}
-		dst[i] = '\0';
-	}
-	return (src_len);
-}
 
 static size_t	count_words(const char *s, char c)
 {

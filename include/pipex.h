@@ -20,6 +20,10 @@ void	exit_error(char *error_msg);
 
 void	fork_and_execute(char *argv[], int *pfd, int i, int argc);
 
+void	close_pipes(int *pfd, int num_pipes);
+void	wait_for_children(int num_children);
+size_t	ft_strlcpy(char *dst, const char *src, size_t size);
+
 
 char	**ft_split(char const *s, char c);
 void	free_split(char **splited);
