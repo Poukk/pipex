@@ -1,32 +1,40 @@
 #------------------ Config -----------------#
 NAME = pipex
 SRCS = $(SRCDIR)/main.c     \
-       $(SRCDIR)/error.c    \
-       $(SRCDIR)/exec.c     \
-       $(SRCDIR)/ft_split.c \
-       $(SRCDIR)/helper.c     \
+	   $(SRCDIR)/error.c    \
+	   $(SRCDIR)/exec.c     \
+	   $(SRCDIR)/helper.c   \
 	   $(SRCDIR)/env.c     \
 
 #---------------- Variables ----------------#
 CC = cc
 CFLAGS = -Wall -Wextra -Werror
-INCLUDES = -I./include
+INCLUDES = -I./include -I./libft
 SRCDIR = src
 OBJDIR = obj
 OBJS = $(SRCS:$(SRCDIR)/%.c=$(OBJDIR)/%.o)
+
+# Libft configuration
+LIBFT_DIR = libft
+LIBFT = $(LIBFT_DIR)/libft.a
 
 GREEN = $$(tput setaf 2)
 RESET = $$(tput sgr0)
 
 #----------------- Targets ----------------#
-all: $(NAME)
+all: $(LIBFT) $(NAME)
 
 $(OBJDIR):
 	@mkdir -p $(OBJDIR)
 	@echo "$(GREEN)Created object directory$(RESET)"
 
+# Rule to make libft
+$(LIBFT):
+	@echo "Compiling libft..."
+	@make --no-print-directory -C $(LIBFT_DIR)
+
 $(NAME): $(OBJDIR) $(OBJS)
-	@$(CC) $(CFLAGS) $(INCLUDES) -o $(NAME) $(OBJS)
+	@$(CC) $(CFLAGS) $(INCLUDES) -o $(NAME) $(OBJS) -L$(LIBFT_DIR) -lft
 	@echo "$(GREEN)$(NAME) created successfully!$(RESET)"
 
 $(OBJDIR)/%.o: $(SRCDIR)/%.c
@@ -34,10 +42,14 @@ $(OBJDIR)/%.o: $(SRCDIR)/%.c
 	@$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
 
 clean:
+	@make --no-print-directory -C $(LIBFT_DIR) clean
 	@rm -rf $(OBJDIR)
 	@echo "$(GREEN)Cleaned object files$(RESET)"
 
-fclean: clean
+fclean:
+	@make --no-print-directory -C $(LIBFT_DIR) fclean
+	@rm -rf $(OBJDIR)
+	@echo "$(GREEN)Cleaned object files$(RESET)"
 	@rm -f $(NAME)
 	@echo "$(GREEN)Cleaned program$(RESET)"
 

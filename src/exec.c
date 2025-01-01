@@ -1,15 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   exec.c                                             :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: alexanfe <alexanfe@student.42sp.org.br>    +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/12/11 02:05:13 by alexanfe          #+#    #+#             */
-/*   Updated: 2024/12/11 02:05:15 by alexanfe         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #include <fcntl.h>
 #include <unistd.h>
 #include <sys/types.h>
@@ -21,27 +9,27 @@ extern char	**environ;
 
 static void execute_command(char *cmd, int in_fd, int out_fd)
 {
-    char **splited_cmd;
-    char *cmd_path;
+	char **splited_cmd;
+	char *cmd_path;
 
-    if (dup2(in_fd, STDIN_FILENO) == -1 || dup2(out_fd, STDOUT_FILENO) == -1)
-        exit_error("dup2");
-    close(in_fd);
-    close(out_fd);
-    splited_cmd = ft_split(cmd, ' ');
-    if (!splited_cmd)
-        exit_error("malloc"); 
-    cmd_path = find_path(splited_cmd[0]);
-    if (!cmd_path)
-    {
-        free_split(splited_cmd);
-        exit_error("command not found");
-    }
-    free(splited_cmd[0]);
-    splited_cmd[0] = cmd_path;
-    execve(cmd_path, splited_cmd, environ);    
-    free_split(splited_cmd);
-    exit_error("execve");
+	if (dup2(in_fd, STDIN_FILENO) == -1 || dup2(out_fd, STDOUT_FILENO) == -1)
+		exit_error("dup2");
+	close(in_fd);
+	close(out_fd);
+	splited_cmd = ft_split(cmd, ' ');
+	if (!splited_cmd)
+		exit_error("malloc"); 
+	cmd_path = find_path(splited_cmd[0]);
+	if (!cmd_path)
+	{
+		free_split(splited_cmd);
+		exit_error("command not found");
+	}
+	free(splited_cmd[0]);
+	splited_cmd[0] = cmd_path;
+	execve(cmd_path, splited_cmd, environ);    
+	free_split(splited_cmd);
+	exit_error("execve");
 }
 
 static void	first_command(char *infile_path, char *command, int *pfd)

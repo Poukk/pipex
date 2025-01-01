@@ -1,32 +1,44 @@
+#------------------ Config -----------------#
 NAME = libft.a
-CC = gcc
+SRCS = ft_split.c \
+	   ft_strjoin.c \
+	   ft_strlcat.c \
+	   ft_strlcpy.c \
+	   ft_strlen.c \
+	   ft_strncmp.c
+
+#---------------- Variables ----------------#
+CC = cc
 CFLAGS = -Wall -Wextra -Werror
-
-SRCS = \
-	ft_split.c ft_strjoin.c ft_strlcat.c \
-	ft_strlcpy.c ft_strlen.c ft_strncmp.c  \
-
 OBJDIR = obj
-OBJS = $(patsubst %.c,$(OBJDIR)/%.o,$(SRCS))
-OBJS_BONUS = $(patsubst %.c,$(OBJDIR)/%.o,$(SRCS_BONUS))
+OBJS = $(SRCS:%.c=$(OBJDIR)/%.o)
 
-all: $(OBJDIR) $(NAME)
+GREEN = $$(tput setaf 2)
+RESET = $$(tput sgr0)
+
+#----------------- Targets ----------------#
+all: $(NAME)
 
 $(OBJDIR):
-	mkdir -p $(OBJDIR)
+	@mkdir -p $(OBJDIR)
+	@echo "$(GREEN)Created libft object directory$(RESET)"
 
-$(NAME): $(OBJS)
-	ar rcs $(NAME) $(OBJS)
+$(NAME): $(OBJDIR) $(OBJS)
+	@ar rcs $(NAME) $(OBJS)
+	@echo "$(GREEN)$(NAME) created successfully!$(RESET)"
 
 $(OBJDIR)/%.o: %.c libft.h
-	$(CC) $(CFLAGS) -c $< -o $@
+	@echo "Compiling $<..."
+	@$(CC) $(CFLAGS) -c $< -o $@
 
 clean:
-	rm -rf $(OBJDIR)
+	@rm -rf $(OBJDIR)
+	@echo "$(GREEN)Cleaned object files$(RESET)"
 
 fclean: clean
-	rm -f $(NAME)
+	@rm -f $(NAME)
+	@echo "$(GREEN)Cleaned library$(RESET)"
 
 re: fclean all
 
-.PHONY: all clean fclean re bonus
+.PHONY: all clean fclean re
