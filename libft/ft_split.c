@@ -10,9 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "pipex.h"
-#include <stddef.h>
-#include <stdlib.h>
+#include "libft.h"
 
 static size_t	count_words(const char *s, char c)
 {

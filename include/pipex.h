@@ -14,23 +14,23 @@
 # define PIPEX_H
 
 # include <unistd.h>
+# include "libft.h"
 
-void	usage_error(void);
-void	exit_error(char *error_msg);
-
-void	fork_and_execute(char *argv[], int *pfd, int i, int argc);
-
-void	close_pipes(int *pfd, int num_pipes);
-void	wait_for_children(int num_children);
-size_t	ft_strlcpy(char *dst, const char *src, size_t size);
-size_t	ft_strlen(const char *s);
-int	ft_strncmp(const char *s1, const char *s2, size_t n);
-char	*ft_strjoin(char const *s1, char const *s2);
+/* env */
 char	*_getenv(const char *name);
 char	*find_path(char *cmd);
 
+/* error */
+void	usage_error(void);
+void	exit_error(char *error_msg);
 
+/* exec */
+void	fork_and_execute(char *argv[], int *pfd, int i, int argc);
 
-char	**ft_split(char const *s, char c);
+/* helper */
 void	free_split(char **splited);
+void	wait_for_children(int num_children);
+void	setup_pipes(int *pfd, int num_pipes);
+void	close_pipes(int *pfd, int num_pipes);
+
 #endif

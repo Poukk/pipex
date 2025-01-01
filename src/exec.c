@@ -19,7 +19,7 @@
 
 extern char	**environ;
 
-void execute_command(char *cmd, int in_fd, int out_fd)
+static void execute_command(char *cmd, int in_fd, int out_fd)
 {
     char **splited_cmd;
     char *cmd_path;
@@ -44,7 +44,7 @@ void execute_command(char *cmd, int in_fd, int out_fd)
     exit_error("execve");
 }
 
-void	first_command(char *infile_path, char *command, int *pfd)
+static void	first_command(char *infile_path, char *command, int *pfd)
 {
 	int	infile;
 
@@ -55,7 +55,7 @@ void	first_command(char *infile_path, char *command, int *pfd)
 	execute_command(command, infile, pfd[1]);
 }
 
-void	last_command(char *outfile_path, char *command, int *pfd, int index)
+static void	last_command(char *outfile_path, char *command, int *pfd, int index)
 {
 	int	outfile;
 
