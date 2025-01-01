@@ -5,6 +5,7 @@ SRCS = $(SRCDIR)/main.c     \
        $(SRCDIR)/exec.c     \
        $(SRCDIR)/ft_split.c \
        $(SRCDIR)/helper.c     \
+	   $(SRCDIR)/env.c     \
 
 #---------------- Variables ----------------#
 CC = cc

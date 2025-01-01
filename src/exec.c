@@ -14,18 +14,34 @@
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/wait.h>
+#include <stdlib.h>
 #include "pipex.h"
 
 extern char	**environ;
 
-void	execute_command(char *cmd, int in_fd, int out_fd)
+void execute_command(char *cmd, int in_fd, int out_fd)
 {
-	if (dup2(in_fd, STDIN_FILENO) == -1 || dup2(out_fd, STDOUT_FILENO) == -1)
-		exit_error("dup2");
-	close(in_fd);
-	close(out_fd);
-	execlp(cmd, cmd, (char *) NULL);
-	exit_error("execlp");
+    char **splited_cmd;
+    char *cmd_path;
+
+    if (dup2(in_fd, STDIN_FILENO) == -1 || dup2(out_fd, STDOUT_FILENO) == -1)
+        exit_error("dup2");
+    close(in_fd);
+    close(out_fd);
+    splited_cmd = ft_split(cmd, ' ');
+    if (!splited_cmd)
+        exit_error("malloc"); 
+    cmd_path = find_path(splited_cmd[0]);
+    if (!cmd_path)
+    {
+        free_split(splited_cmd);
+        exit_error("command not found");
+    }
+    free(splited_cmd[0]);
+    splited_cmd[0] = cmd_path;
+    execve(cmd_path, splited_cmd, environ);    
+    free_split(splited_cmd);
+    exit_error("execve");
 }
 
 void	first_command(char *infile_path, char *command, int *pfd)
