@@ -9,6 +9,7 @@ int	main(int argc, char *argv[])
 	int	num_pipes;
 	int	*pfd;
 	int	i;
+	int	last_status;
 
 	if (argc < 5)
 		usage_error();
@@ -29,7 +30,7 @@ int	main(int argc, char *argv[])
 		i++;
 	}
 	close_pipes(pfd, num_pipes);
-	wait_for_children(argc - 3);
+	last_status = wait_for_children(argc - 3);
 	free(pfd);
-	return (0);
+	return (last_status);
 }

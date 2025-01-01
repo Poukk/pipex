@@ -23,12 +23,14 @@ static void	execute_command(char *cmd, int in_fd, int out_fd)
 	if (!cmd_path)
 	{
 		free_split(splited_cmd);
+		free(cmd_path);
 		exit_error("command not found");
 	}
 	free(splited_cmd[0]);
 	splited_cmd[0] = cmd_path;
 	execve(cmd_path, splited_cmd, environ);
 	free_split(splited_cmd);
+	free(cmd_path);
 	exit_error("execve");
 }
 

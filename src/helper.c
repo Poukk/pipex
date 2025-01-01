@@ -11,17 +11,23 @@ void	free_split(char **splited)
 		free(splited[i++]);
 }
 
-void	wait_for_children(int num_children)
+int	wait_for_children(int num_processes)
 {
-	int	status;
-	int	i;
+	int		status;
+	int		last_status;
+	pid_t	pid;
 
-	i = 0;
-	while (i < num_children)
+	last_status = 0;
+	while (num_processes > 0)
 	{
-		wait(&status);
-		i++;
+		pid = wait(&status);
+		if (pid == -1)
+			exit_error("wait");
+		if (WIFEXITED(status))
+			last_status = WEXITSTATUS(status);
+		num_processes--;
 	}
+	return (last_status);
 }
 
 void	setup_pipes(int *pfd, int num_pipes)

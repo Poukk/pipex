@@ -23,13 +23,14 @@ char	*find_path(char *cmd);
 /* error */
 void	usage_error(void);
 void	exit_error(char *error_msg);
+void cleanup_and_exit(char **splited_cmd, char **paths, char *error_msg);
 
 /* exec */
 void	fork_and_execute(char *argv[], int *pfd, int i, int argc);
 
 /* helper */
+int     wait_for_children(int num_children);
 void	free_split(char **splited);
-void	wait_for_children(int num_children);
 void	setup_pipes(int *pfd, int num_pipes);
 void	close_pipes(int *pfd, int num_pipes);
 

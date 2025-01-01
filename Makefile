@@ -41,6 +41,9 @@ $(OBJDIR)/%.o: $(SRCDIR)/%.c
 	@echo "Compiling $<..."
 	@$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
 
+test:
+	@../pipex-tester/run.sh
+
 clean:
 	@make --no-print-directory -C $(LIBFT_DIR) clean
 	@rm -rf $(OBJDIR)
