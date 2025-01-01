@@ -7,10 +7,10 @@
 
 extern char	**environ;
 
-static void execute_command(char *cmd, int in_fd, int out_fd)
+static void	execute_command(char *cmd, int in_fd, int out_fd)
 {
-	char **splited_cmd;
-	char *cmd_path;
+	char	**splited_cmd;
+	char	*cmd_path;
 
 	if (dup2(in_fd, STDIN_FILENO) == -1 || dup2(out_fd, STDOUT_FILENO) == -1)
 		exit_error("dup2");
@@ -18,7 +18,7 @@ static void execute_command(char *cmd, int in_fd, int out_fd)
 	close(out_fd);
 	splited_cmd = ft_split(cmd, ' ');
 	if (!splited_cmd)
-		exit_error("malloc"); 
+		exit_error("malloc");
 	cmd_path = find_path(splited_cmd[0]);
 	if (!cmd_path)
 	{
@@ -27,7 +27,7 @@ static void execute_command(char *cmd, int in_fd, int out_fd)
 	}
 	free(splited_cmd[0]);
 	splited_cmd[0] = cmd_path;
-	execve(cmd_path, splited_cmd, environ);    
+	execve(cmd_path, splited_cmd, environ);
 	free_split(splited_cmd);
 	exit_error("execve");
 }
