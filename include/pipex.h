@@ -15,23 +15,20 @@
 
 # include <unistd.h>
 # include "libft.h"
+# include "error.h"
 
 /* env */
 char	*_getenv(const char *name);
 char	*find_path(char *cmd);
 
-/* error */
-void	usage_error(void);
-void	exit_error(char *error_msg);
-void cleanup_and_exit(char **splited_cmd, char **paths, char *error_msg);
-
 /* exec */
-void	fork_and_execute(char *argv[], int *pfd, int i, int argc);
+void    fork_and_execute(char *argv[], int *pfd, int i, int argc, t_cleanup *cleanup_data);
 
 /* helper */
 int     wait_for_children(int num_children);
 void	free_split(char **splited);
 void	setup_pipes(int *pfd, int num_pipes);
 void	close_pipes(int *pfd, int num_pipes);
+void    free_pipes(void *ptr);
 
 #endif

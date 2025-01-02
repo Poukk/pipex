@@ -9,6 +9,7 @@ void	free_split(char **splited)
 	i = 0;
 	while (splited[i] != NULL)
 		free(splited[i++]);
+	free(splited);
 }
 
 int	wait_for_children(int num_processes)
@@ -54,4 +55,9 @@ void	close_pipes(int *pfd, int num_pipes)
 		close(pfd[2 * i + 1]);
 		i++;
 	}
+}
+
+void    free_pipes(void *ptr)
+{
+    free(ptr);
 }
