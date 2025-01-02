@@ -1,10 +1,4 @@
-#include <fcntl.h>
-#include <unistd.h>
-#include <sys/types.h>
-#include <sys/wait.h>
-#include <stdlib.h>
 #include "pipex.h"
-#include "error.h"
 
 extern char	**environ;
 

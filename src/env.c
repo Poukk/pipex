@@ -1,5 +1,4 @@
 #include "pipex.h"
-#include <stdlib.h>
 
 extern char	**environ;
 

@@ -1,9 +1,13 @@
 #ifndef PIPEX_H
 # define PIPEX_H
 
-# include <unistd.h>
 # include "libft.h"
 # include "error.h"
+# include <unistd.h>
+# include <stdlib.h>
+# include <fcntl.h>
+# include <sys/wait.h>
+# include <sys/types.h>
 
 typedef struct s_pipe_data
 {
@@ -15,6 +19,7 @@ typedef struct s_pipe_data
 
 /* env */
 char	*_getenv(const char *name);
+char	**get_path(void);
 char	*find_path(char *cmd);
 
 /* exec */

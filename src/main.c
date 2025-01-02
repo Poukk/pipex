@@ -1,8 +1,4 @@
 #include "pipex.h"
-#include <stdlib.h>
-#include <unistd.h>
-#include <fcntl.h>
-#include <sys/wait.h>
 
 void	init(t_pipe_data *data, t_cleanup *cleanup, int argc, char *argv[])
 {

@@ -1,6 +1,4 @@
 #include "pipex.h"
-#include <stdlib.h>
-#include <sys/wait.h>
 
 void	free_split(char **splited)
 {
