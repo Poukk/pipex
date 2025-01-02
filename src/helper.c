@@ -57,7 +57,7 @@ void	close_pipes(int *pfd, int num_pipes)
 	}
 }
 
-void    free_pipes(void *ptr)
+void	free_pipes(void *ptr)
 {
-    free(ptr);
+	free(ptr);
 }

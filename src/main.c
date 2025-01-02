@@ -6,34 +6,33 @@
 
 int    main(int argc, char *argv[])
 {
-    int            num_pipes;
-    int            *pfd;
-    int            i;
+    t_pipe_data    data;
+    t_cleanup      cleanup_data;
     int            last_status;
-    t_cleanup    cleanup_data = {NULL, NULL};
 
     if (argc < 5)
         usage_error();
-    num_pipes = argc - 4;
-    pfd = malloc(num_pipes * 2 * sizeof(int));
-    if (!pfd)
+    data.cmd_count = argc - 3;
+    data.pfd = malloc((argc - 4) * 2 * sizeof(int));
+    data.argv = argv;
+    if (!data.pfd)
         cleanup_error("malloc", NULL);
-    register_cleanup(&cleanup_data, pfd, free_pipes);
+    reg_cleanup(&cleanup_data, data.pfd, free_pipes);
     
-    setup_pipes(pfd, num_pipes);
-    i = 0;
-    while (i < argc - 3)
+    setup_pipes(data.pfd, argc - 4);
+    data.index = 0;
+    while (data.index < data.cmd_count)
     {
-        fork_and_execute(argv, pfd, i, argc, &cleanup_data);
-        if (i > 0)
+        fork_and_execute(&data, &cleanup_data);
+        if (data.index > 0)
         {
-            close(pfd[2 * (i - 1)]);
-            close(pfd[2 * (i - 1) + 1]);
+            close(data.pfd[2 * (data.index - 1)]);
+            close(data.pfd[2 * (data.index - 1) + 1]);
         }
-        i++;
+        data.index++;
     }
-    close_pipes(pfd, num_pipes);
-    last_status = wait_for_children(argc - 3);
-    free(pfd);
+    close_pipes(data.pfd, argc - 4);
+    last_status = wait_for_children(data.cmd_count);
+    free(data.pfd);
     return (last_status);
 }

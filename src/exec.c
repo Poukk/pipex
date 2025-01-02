@@ -8,10 +8,10 @@
 
 extern char	**environ;
 
-static void    execute_command(char *cmd, int in_fd, int out_fd, t_cleanup *cleanup_data)
+void	exec_cmd(char *cmd, int in_fd, int out_fd, t_cleanup *cleanup_data)
 {
-	char    **splited_cmd;
-	char    *cmd_path;
+	char	**splited_cmd;
+	char	*cmd_path;
 
 	if (dup2(in_fd, STDIN_FILENO) == -1 || dup2(out_fd, STDOUT_FILENO) == -1)
 		cleanup_error("dup2", cleanup_data);
@@ -34,45 +34,69 @@ static void    execute_command(char *cmd, int in_fd, int out_fd, t_cleanup *clea
 	cleanup_error("execve", cleanup_data);
 }
 
-static void    first_command(char *infile_path, char *command, int *pfd, t_cleanup *cleanup_data)
+void	first_command(t_pipe_data *data, t_cleanup *clean_data)
 {
-	int    infile;
+	char	*infile_path;
+	char	*cmd;
+	int		*pfd;
+	int		infile;
 
+	infile_path = data->argv[1];
+	cmd = data->argv[2];
+	pfd = data->pfd;
 	infile = open(infile_path, O_RDONLY);
 	if (infile < 0)
-		cleanup_error("open infile", cleanup_data);
+		cleanup_error("open infile", clean_data);
 	close(pfd[0]);
-	execute_command(command, infile, pfd[1], cleanup_data);
+	exec_cmd(cmd, infile, pfd[1], clean_data);
 }
 
-static void    last_command(char *outfile_path, char *command, int *pfd, int index, t_cleanup *cleanup_data)
+void	last_command(t_pipe_data *data, t_cleanup *cleanup)
 {
-	int    outfile;
+	char	*outfile_path;
+	char	*cmd;
+	int		*pfd;
+	int		outfile;
+	int		i;
 
+	outfile_path = data->argv[data->cmd_count + 2];
+	cmd = data->argv[data->cmd_count + 1];
+	pfd = data->pfd;
+	i = data->index;
 	outfile = open(outfile_path, O_WRONLY | O_CREAT | O_TRUNC, 0644);
 	if (outfile < 0)
-		cleanup_error("open outfile", cleanup_data);
-	close(pfd[2 * (index - 1) + 1]);
-	execute_command(command, pfd[2 * (index - 1)], outfile, cleanup_data);
+		cleanup_error("open outfile", cleanup);
+	close(pfd[2 * (i - 1) + 1]);
+	exec_cmd(cmd, pfd[2 * (i - 1)], outfile, cleanup);
 }
 
-void    fork_and_execute(char *argv[], int *pfd, int i, int argc, t_cleanup *cleanup_data)
+void	handle_middle_command(t_pipe_data *data, t_cleanup *cleanup)
 {
-	pid_t    pid;
+	int		i;
+	int		*pfd;
+	char	**argv;
+
+	i = data->index;
+	pfd = data->pfd;
+	argv = data->argv;
+	close(pfd[2 * (i - 1) + 1]);
+	exec_cmd(argv[i + 2], pfd[2 * (i - 1)], pfd[2 * i + 1], cleanup);
+}
+
+void	fork_and_execute(t_pipe_data *data, t_cleanup *cleanup)
+{
+	pid_t	pid;
 
 	pid = fork();
 	if (pid < 0)
-		cleanup_error("fork", cleanup_data);
+		cleanup_error("fork", cleanup);
 	if (pid == 0)
 	{
-		if (i == 0)
-			first_command(argv[1], argv[2], pfd, cleanup_data);
-		else if (i == argc - 4)
-			last_command(argv[argc - 1], argv[argc - 2], pfd, i, cleanup_data);
+		if (data->index == 0)
+			first_command(data, cleanup);
+		else if (data->index == data->cmd_count - 1)
+			last_command(data, cleanup);
 		else
-		{
-			close(pfd[2 * (i - 1) + 1]);
-			execute_command(argv[i + 2], pfd[2 * (i - 1)], pfd[2 * i + 1], cleanup_data);
-		}
+			handle_middle_command(data, cleanup);
 	}
 }
