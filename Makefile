@@ -1,10 +1,10 @@
 #------------------ Config -----------------#
 NAME = pipex
-SRCS = $(SRCDIR)/main.c     \
-	   $(SRCDIR)/error.c    \
-	   $(SRCDIR)/exec.c     \
-	   $(SRCDIR)/helper.c   \
-	   $(SRCDIR)/env.c     \
+SRCS =	$(SRCDIR)/main.c   \
+	$(SRCDIR)/error.c  \
+	$(SRCDIR)/exec.c   \
+	$(SRCDIR)/helper.c \
+	$(SRCDIR)/env.c    \
 
 #---------------- Variables ----------------#
 CC = cc
@@ -14,7 +14,6 @@ SRCDIR = src
 OBJDIR = obj
 OBJS = $(SRCS:$(SRCDIR)/%.c=$(OBJDIR)/%.o)
 
-# Libft configuration
 LIBFT_DIR = libft
 LIBFT = $(LIBFT_DIR)/libft.a
 
@@ -28,7 +27,6 @@ $(OBJDIR):
 	@mkdir -p $(OBJDIR)
 	@echo "$(GREEN)Created object directory$(RESET)"
 
-# Rule to make libft
 $(LIBFT):
 	@echo "Compiling libft..."
 	@make --no-print-directory -C $(LIBFT_DIR)
@@ -40,9 +38,6 @@ $(NAME): $(OBJDIR) $(OBJS)
 $(OBJDIR)/%.o: $(SRCDIR)/%.c
 	@echo "Compiling $<..."
 	@$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
-
-test:
-	@../pipex-tester/run.sh
 
 clean:
 	@make --no-print-directory -C $(LIBFT_DIR) clean
