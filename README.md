@@ -1,6 +1,3 @@
----
-cssclasses: justify-text
----
 ## Project scope
 
 The idea of this project is to understand how pipes work. Trying to copy the usage in shells of `|`. The mandatory part asks for the following structure:
@@ -18,10 +15,10 @@ The idea of this project is to understand how pipes work. Trying to copy the usa
 
 ---
 
-## General project idea
-The idea here is to creating two children that will become the commands that we want to executing. We use `dup2()` to change STDIN and STDOUT as needed, then, wait for the children to terminate.
+## Project Visualization
+The objective here is to create two children that will become the commands that we want to executing. We use `dup2()` to change STDIN and STDOUT as needed, then, wait for the children to terminate.
 
-![[pipex_flow.png]]
+![pipex_flow](https://github.com/Poukk/pipex/blob/main/pipex_flow.png)
 
 ---
 
