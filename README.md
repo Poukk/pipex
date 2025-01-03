@@ -23,7 +23,7 @@ The objective here is to create two children that will become the commands that 
 ---
 
 ## Starting points
-### Understanding [[System Calls]]
+### Understanding System Calls
 A system call is a request for service that a program makes of the kernel. The service is generally something that only the kernel has the privilege to do, such as doing I/O. Programmers don’t normally need to be concerned with system calls because there are functions in the GNU C Library to do virtually everything that system calls do. These functions work by making system calls themselves.
 
 For example, the C function `exit()` is not a syscall, but calls `_exit()` to terminate a process, besides doing additional cleanup.
