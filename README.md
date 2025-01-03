@@ -16,7 +16,11 @@ The idea of this project is to understand how pipes work. Trying to copy the usa
 ---
 
 ## Project Visualization
-The objective here is to create two children that will become the commands that we want to executing. We use `dup2()` to change STDIN and STDOUT as needed, then, wait for the children to terminate.
+The objective here is to create two children that will become the commands that we want to execute.
+  - Use `dup2()` to change STDIN and STDOUT as needed
+  - Use `execve()` function to transform the children in the process needed
+  - Read/write to pipe
+  - Wait for the children to terminate
 
 ![pipex_flow](https://github.com/Poukk/pipex/blob/main/pipex_flow.png)
 
