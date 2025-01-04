@@ -1,11 +1,12 @@
 #------------------ Config -----------------#
 NAME = libft.a
-SRCS = ft_split.c \
-	   ft_strjoin.c \
-	   ft_strlcat.c \
-	   ft_strlcpy.c \
-	   ft_strlen.c \
-	   ft_strncmp.c
+SRCS =	ft_split.c     \
+	ft_strjoin.c   \
+	ft_strlcat.c   \
+	ft_strlcpy.c   \
+	ft_strlen.c    \
+	ft_strncmp.c   \
+	ft_putstr_fd.c \
 
 #---------------- Variables ----------------#
 CC = cc

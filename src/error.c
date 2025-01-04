@@ -10,6 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "libft.h"
 #include "error.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -24,7 +25,7 @@ void	cleanup_error(char *error_msg, t_cleanup *cleanup_data)
 
 void	usage_error(void)
 {
-	printf("Usage: ./pipex file1 cmd1 cmd2 file2\n");
+	ft_putstr_fd("Usage: ./pipex file1 cmd1 cmd2 file2\n", 1);
 	exit(EXIT_FAILURE);
 }
 
