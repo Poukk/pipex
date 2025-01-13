@@ -21,6 +21,7 @@ size_t	ft_strlcpy(char *dst, const char *src, size_t size);
 size_t	ft_strlcat(char *dst, const char *src, size_t size);
 int		ft_strncmp(const char *s1, const char *s2, size_t n);
 char	*ft_strjoin(char const *s1, char const *s2);
+char	*ft_strdup(const char *s);
 char	**ft_split(char const *s, char c);
 void	ft_putstr_fd(char *s, int fd);
 #endif

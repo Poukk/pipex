@@ -26,7 +26,10 @@ void	exec_cmd(char *cmd, int in_fd, int out_fd, t_cleanup *cleanup_data)
 	splited_cmd = ft_split(cmd, ' ');
 	if (!splited_cmd)
 		cleanup_error("malloc", cleanup_data);
-	cmd_path = find_path(splited_cmd[0]);
+	if (!access(splited_cmd[0], F_OK))
+		cmd_path = ft_strdup(splited_cmd[0]);
+	else
+		cmd_path = find_path(splited_cmd[0]);
 	if (!cmd_path)
 	{
 		free_split(splited_cmd);

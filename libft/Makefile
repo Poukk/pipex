@@ -7,6 +7,7 @@ SRCS =	ft_split.c     \
 	ft_strlen.c    \
 	ft_strncmp.c   \
 	ft_putstr_fd.c \
+	ft_strdup.c
 
 #---------------- Variables ----------------#
 CC = cc
