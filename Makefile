@@ -60,7 +60,7 @@ $(OBJDIR)/%.o: $(SRCDIR)/%.c
 	@$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
 
 $(BONUS_OBJDIR)/%.o: $(BONUSDIR)/%.c
-	@echo "Compiling $< (bonus)..."
+	@echo "Compiling $<..."
 	@$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
 
 clean:
