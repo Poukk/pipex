@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   pipex.h                                            :+:      :+:    :+:   */
+/*   pipex_bonus.h                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: alexanfe <alexanfe@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -10,32 +10,38 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef PIPEX_H
-# define PIPEX_H
+#ifndef PIPEX_BONUS_H
+# define PIPEX_BONUS_H
 
-# include "error.h"
 # include "libft.h"
+# include "error_bonus.h"
 # include <unistd.h>
-# include <fcntl.h>
 # include <stdlib.h>
+# include <fcntl.h>
 # include <sys/wait.h>
+# include <sys/types.h>
 
-typedef struct s_pipex
+typedef struct s_pipe_data
 {
-    char    **argv;
-    int     pipe_fd[2];
-    pid_t   pid1;
-    pid_t   pid2;
-}   t_pipex;
+	int		*pfd;
+	int		index;
+	int		cmd_count;
+	char	**argv;
+}	t_pipe_data;
 
-void    exec_cmd(char *cmd, int in_fd, int out_fd);
-
+/* env */
 char	*_getenv(const char *name);
 char	**get_path(void);
-char    *find_path(char *cmd);
+char	*find_path(char *cmd);
 
+/* exec */
+void	fork_and_execute(t_pipe_data *data, t_cleanup *cleanup);
+
+/* helper */
+int		wait_for_children(int num_children);
 void	free_split(char **splited);
+void	setup_pipes(int *pfd, int num_pipes);
+void	close_pipes(int *pfd, int num_pipes);
+void	free_pipes(void *ptr);
 
-void execute_first_cmd(t_pipex *pipex);
-void execute_second_cmd(t_pipex *pipex);
 #endif

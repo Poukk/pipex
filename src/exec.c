@@ -5,8 +5,8 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: alexanfe <alexanfe@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/01/02 22:06:46 by alexanfe          #+#    #+#             */
-/*   Updated: 2025/01/02 22:06:50 by alexanfe         ###   ########.fr       */
+/*   Created: 2025/01/15 18:07:16 by alexanfe          #+#    #+#             */
+/*   Updated: 2025/01/15 18:09:53 by alexanfe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,98 +14,53 @@
 
 extern char	**environ;
 
-void	exec_cmd(char *cmd, int in_fd, int out_fd, t_cleanup *cleanup_data)
+void	exec_cmd(char *cmd, int in_fd, int out_fd)
 {
-	char	**splited_cmd;
-	char	*cmd_path;
+	char	**args;
+	char	*path;
 
-	if (dup2(in_fd, STDIN_FILENO) == -1 || dup2(out_fd, STDOUT_FILENO) == -1)
-		cleanup_error("dup2", cleanup_data);
+	if (dup2(in_fd, STDIN_FILENO) < 0)
+		exit_error("Dup2 error");
+	if (dup2(out_fd, STDOUT_FILENO) < 0)
+		exit_error("Dup2 error");
 	close(in_fd);
 	close(out_fd);
-	splited_cmd = ft_split(cmd, ' ');
-	if (!splited_cmd)
-		cleanup_error("malloc", cleanup_data);
-	if (!access(splited_cmd[0], F_OK))
-		cmd_path = ft_strdup(splited_cmd[0]);
+	args = ft_split(cmd, ' ');
+	if (!args)
+		exit_error("Split error");
+	if (access(args[0], F_OK) == 0)
+		path = ft_strdup(args[0]);
 	else
-		cmd_path = find_path(splited_cmd[0]);
-	if (!cmd_path)
+		path = find_path(args[0]);
+	if (!path)
 	{
-		free_split(splited_cmd);
-		cleanup_error("command not found", cleanup_data);
+		ft_putstr_fd("Command not found: ", 2);
+		exit(127);
 	}
-	free(splited_cmd[0]);
-	splited_cmd[0] = cmd_path;
-	execve(cmd_path, splited_cmd, environ);
-	free_split(splited_cmd);
-	free(cmd_path);
-	cleanup_error("execve", cleanup_data);
+	execve(path, args, environ);
+	free(path);
+	free_split(args);
+	exit_error("Execve error");
 }
 
-void	first_command(t_pipe_data *data, t_cleanup *clean_data)
+void	execute_first_cmd(t_pipex *pipex)
 {
-	char	*infile_path;
-	char	*cmd;
-	int		*pfd;
-	int		infile;
+	int	infile;
 
-	infile_path = data->argv[1];
-	cmd = data->argv[2];
-	pfd = data->pfd;
-	infile = open(infile_path, O_RDONLY);
+	infile = open(pipex->argv[1], O_RDONLY);
 	if (infile < 0)
-		cleanup_error("open infile", clean_data);
-	close(pfd[0]);
-	exec_cmd(cmd, infile, pfd[1], clean_data);
+		exit_error("Infile error");
+	close(pipex->pipe_fd[0]);
+	exec_cmd(pipex->argv[2], infile, pipex->pipe_fd[1]);
 }
 
-void	last_command(t_pipe_data *data, t_cleanup *cleanup)
+void	execute_second_cmd(t_pipex *pipex)
 {
-	char	*outfile_path;
-	char	*cmd;
-	int		*pfd;
-	int		outfile;
-	int		i;
+	int	outfile;
 
-	outfile_path = data->argv[data->cmd_count + 2];
-	cmd = data->argv[data->cmd_count + 1];
-	pfd = data->pfd;
-	i = data->index;
-	outfile = open(outfile_path, O_WRONLY | O_CREAT | O_TRUNC, 0644);
+	outfile = open(pipex->argv[4], O_WRONLY | O_CREAT | O_TRUNC, 0644);
 	if (outfile < 0)
-		cleanup_error("open outfile", cleanup);
-	close(pfd[2 * (i - 1) + 1]);
-	exec_cmd(cmd, pfd[2 * (i - 1)], outfile, cleanup);
-}
-
-void	handle_middle_command(t_pipe_data *data, t_cleanup *cleanup)
-{
-	int		i;
-	int		*pfd;
-	char	**argv;
-
-	i = data->index;
-	pfd = data->pfd;
-	argv = data->argv;
-	close(pfd[2 * (i - 1) + 1]);
-	exec_cmd(argv[i + 2], pfd[2 * (i - 1)], pfd[2 * i + 1], cleanup);
-}
-
-void	fork_and_execute(t_pipe_data *data, t_cleanup *cleanup)
-{
-	pid_t	pid;
-
-	pid = fork();
-	if (pid < 0)
-		cleanup_error("fork", cleanup);
-	if (pid == 0)
-	{
-		if (data->index == 0)
-			first_command(data, cleanup);
-		else if (data->index == data->cmd_count - 1)
-			last_command(data, cleanup);
-		else
-			handle_middle_command(data, cleanup);
-	}
+		exit_error("Outfile error");
+	close(pipex->pipe_fd[1]);
+	exec_cmd(pipex->argv[3], pipex->pipe_fd[0], outfile);
 }

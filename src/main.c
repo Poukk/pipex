@@ -5,46 +5,36 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: alexanfe <alexanfe@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/01/02 22:06:58 by alexanfe          #+#    #+#             */
-/*   Updated: 2025/01/02 22:06:59 by alexanfe         ###   ########.fr       */
+/*   Created: 2025/01/15 18:04:46 by alexanfe          #+#    #+#             */
+/*   Updated: 2025/01/15 18:05:02 by alexanfe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex.h"
 
-void	init(t_pipe_data *data, t_cleanup *cleanup, int argc, char *argv[])
-{
-	if (argc < 5)
-		usage_error();
-	data->cmd_count = argc - 3;
-	data->pfd = malloc((argc - 4) * 2 * sizeof(int));
-	data->argv = argv;
-	data->index = 0;
-	if (!data->pfd)
-		cleanup_error("malloc", NULL);
-	reg_cleanup(cleanup, data->pfd, free_pipes);
-	setup_pipes(data->pfd, argc - 4);
-}
-
 int	main(int argc, char *argv[])
 {
-	t_pipe_data	data;
-	t_cleanup	cleanup_data;
-	int			last_status;
+	t_pipex	pipex;
+	int		status;
 
-	init(&data, &cleanup_data, argc, argv);
-	while (data.index < data.cmd_count)
-	{
-		fork_and_execute(&data, &cleanup_data);
-		if (data.index > 0)
-		{
-			close(data.pfd[2 * (data.index - 1)]);
-			close(data.pfd[2 * (data.index - 1) + 1]);
-		}
-		data.index++;
-	}
-	close_pipes(data.pfd, argc - 4);
-	last_status = wait_for_children(data.cmd_count);
-	free(data.pfd);
-	return (last_status);
+	if (argc != 5)
+		usage_error();
+	pipex.argv = argv;
+	if (pipe(pipex.pipe_fd) < 0)
+		exit_error("Pipe error");
+	pipex.pid1 = fork();
+	if (pipex.pid1 < 0)
+		exit_error("Fork error");
+	if (pipex.pid1 == 0)
+		execute_first_cmd(&pipex);
+	pipex.pid2 = fork();
+	if (pipex.pid2 < 0)
+		exit_error("Fork error");
+	if (pipex.pid2 == 0)
+		execute_second_cmd(&pipex);
+	close(pipex.pipe_fd[0]);
+	close(pipex.pipe_fd[1]);
+	waitpid(pipex.pid1, &status, 0);
+	waitpid(pipex.pid2, &status, 0);
+	return (WEXITSTATUS(status));
 }
