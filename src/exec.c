@@ -35,7 +35,7 @@ void	exec_cmd(char *cmd, int in_fd, int out_fd)
 	if (!path)
 	{
 		free_split(args);
-		exit_wcode("command not found or not executable", 127);
+		exit_wcode("command not found or not executable", 126);
 	}
 	execve(path, args, environ);
 	free(path);
