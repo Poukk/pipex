@@ -14,6 +14,6 @@
 # define ERROR_H
 
 void	exit_error(char *error_msg);
-void    usage_error(void);
+void	usage_error(void);
 
 #endif
