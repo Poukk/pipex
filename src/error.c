@@ -25,3 +25,9 @@ void	exit_error(char *error_msg)
 	perror(error_msg);
 	exit(EXIT_FAILURE);
 }
+
+void	exit_wcode(char *error_msg, int exit_code)
+{
+	ft_putstr_fd(error_msg, 2);
+	exit(exit_code);
+}

@@ -43,7 +43,3 @@ Inter-Process Communication (IPC) refers to mechanisms that allow processes to s
 
 ### Understanding Pipes
 Pipes represent one of the simplest IPC mechanisms in Unix, providing unidirectional byte stream communication between processes. When created using pipe(), the system returns two file descriptors - a read end and a write end. Data flows one way through the pipe: what's written to the write end becomes available for reading at the read end. Pipes are typically used with fork() - a parent process creates a pipe, then forks a child, and each process uses only the end it needs. The kernel manages a buffer for the pipe (usually 64KB) and handles flow control automatically: writes block when the pipe is full, reads block when empty. Pipes are commonly used to implement shell command pipelines and to establish parent-child process communication channels. Their simplicity and automatic buffering make them ideal for streaming data between related processes.
-
-### To-Do
-- [ ] Fix: throw error when file in found but not executable
-- [ ] Fix: double free when a directory is passed as a command 

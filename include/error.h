@@ -15,5 +15,6 @@
 
 void	exit_error(char *error_msg);
 void	usage_error(void);
+void	exit_wcode(char *error_msg, int exit_code);
 
 #endif

@@ -20,27 +20,27 @@ void	exec_cmd(char *cmd, int in_fd, int out_fd)
 	char	*path;
 
 	if (dup2(in_fd, STDIN_FILENO) < 0)
-		exit_error("Dup2 error");
+		exit_error("dup2 error");
 	if (dup2(out_fd, STDOUT_FILENO) < 0)
-		exit_error("Dup2 error");
+		exit_error("dup2 error");
 	close(in_fd);
 	close(out_fd);
 	args = ft_split(cmd, ' ');
 	if (!args)
-		exit_error("Split error");
-	if (access(args[0], F_OK) == 0)
+		exit_error("split error");
+	if (!access(args[0], F_OK | X_OK))
 		path = ft_strdup(args[0]);
 	else
 		path = find_path(args[0]);
 	if (!path)
 	{
-		ft_putstr_fd("Command not found: ", 2);
-		exit(127);
+		free_split(args);
+		exit_wcode("command not found or not executable", 127);
 	}
 	execve(path, args, environ);
 	free(path);
 	free_split(args);
-	exit_error("Execve error");
+	exit_error("execve error");
 }
 
 void	execute_first_cmd(t_pipex *pipex)

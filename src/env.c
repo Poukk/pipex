@@ -56,7 +56,7 @@ char	*find_path(char *cmd)
 		tmp_path = ft_strjoin(*splited_path, "/");
 		joined_cmd = ft_strjoin(tmp_path, cmd);
 		free(tmp_path);
-		if (access(joined_cmd, F_OK) == 0)
+		if (access(joined_cmd, F_OK | X_OK) == 0)
 		{
 			free_split(original_path);
 			return (joined_cmd);
