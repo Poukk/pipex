@@ -14,28 +14,45 @@
 
 extern char	**environ;
 
-void	exec_cmd(char *cmd, int in_fd, int out_fd)
+void	duplicate_std(int in_fd, int out_fd)
 {
-	char	**args;
-	char	*path;
-
 	if (dup2(in_fd, STDIN_FILENO) < 0)
 		exit_error("dup2 error");
 	if (dup2(out_fd, STDOUT_FILENO) < 0)
 		exit_error("dup2 error");
 	close(in_fd);
 	close(out_fd);
+}
+
+int	is_exec(char *path)
+{
+	if (access(path, X_OK) == 0)
+		return (1);
+	return (0);
+}
+
+void	exec_cmd(char *cmd, int in_fd, int out_fd)
+{
+	char	**args;
+	char	*path;
+
+	duplicate_std(in_fd, out_fd);
 	args = ft_split(cmd, ' ');
 	if (!args)
 		exit_error("split error");
-	if (!access(args[0], F_OK | X_OK))
+	if (!access(args[0], F_OK))
 		path = ft_strdup(args[0]);
 	else
 		path = find_path(args[0]);
 	if (!path)
 	{
 		free_split(args);
-		exit_wcode("command not found or not executable", 126);
+		exit_wcode("command not found\n", 127);
+	}
+	if (!is_exec(path))
+	{
+		free_split(args);
+		exit_wcode("command not executable\n", 126);
 	}
 	execve(path, args, environ);
 	free(path);
