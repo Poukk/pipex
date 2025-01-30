@@ -16,31 +16,31 @@ extern char	**environ;
 
 void	exec_cmd(char *cmd, int in_fd, int out_fd, t_cleanup *cleanup_data)
 {
-	char	**splited_cmd;
-	char	*cmd_path;
+	char	**args;
+	char	*path;
 
-	if (dup2(in_fd, STDIN_FILENO) == -1 || dup2(out_fd, STDOUT_FILENO) == -1)
-		cleanup_error("dup2", cleanup_data);
-	close(in_fd);
-	close(out_fd);
-	splited_cmd = ft_split(cmd, ' ');
-	if (!splited_cmd)
-		cleanup_error("malloc", cleanup_data);
-	if (!access(splited_cmd[0], F_OK | X_OK))
-		cmd_path = ft_strdup(splited_cmd[0]);
+	duplicate_std(in_fd, out_fd);
+	args = ft_split(cmd, ' ');
+	if (!args)
+		cleanup_error("malloc", cleanup_data, EXIT_FAILURE);
+	if (!access(args[0], F_OK | X_OK))
+		path = ft_strdup(args[0]);
 	else
-		cmd_path = find_path(splited_cmd[0]);
-	if (!cmd_path)
+		path = find_path(args[0]);
+	if (!path)
 	{
-		free_split(splited_cmd);
-		cleanup_error("command not found or not executable", cleanup_data);
+		free_split(args);
+		cleanup_error("command not found", cleanup_data, 127);
 	}
-	free(splited_cmd[0]);
-	splited_cmd[0] = cmd_path;
-	execve(cmd_path, splited_cmd, environ);
-	free_split(splited_cmd);
-	free(cmd_path);
-	cleanup_error("execve", cleanup_data);
+	if (!is_exec(path))
+	{
+		free_split(args);
+		cleanup_error("command not executable", cleanup_data, 126);
+	}
+	execve(path, args, environ);
+	free(path);
+	free_split(args);
+	cleanup_error("execve", cleanup_data, EXIT_FAILURE);
 }
 
 void	first_command(t_pipe_data *data, t_cleanup *clean_data)
@@ -55,7 +55,7 @@ void	first_command(t_pipe_data *data, t_cleanup *clean_data)
 	pfd = data->pfd;
 	infile = open(infile_path, O_RDONLY);
 	if (infile < 0)
-		cleanup_error("open infile", clean_data);
+		cleanup_error("open infile", clean_data, EXIT_FAILURE);
 	close(pfd[0]);
 	exec_cmd(cmd, infile, pfd[1], clean_data);
 }
@@ -74,7 +74,7 @@ void	last_command(t_pipe_data *data, t_cleanup *cleanup)
 	i = data->index;
 	outfile = open(outfile_path, O_WRONLY | O_CREAT | O_TRUNC, 0644);
 	if (outfile < 0)
-		cleanup_error("open outfile", cleanup);
+		cleanup_error("open outfile", cleanup, EXIT_FAILURE);
 	close(pfd[2 * (i - 1) + 1]);
 	exec_cmd(cmd, pfd[2 * (i - 1)], outfile, cleanup);
 }
@@ -98,7 +98,7 @@ void	fork_and_execute(t_pipe_data *data, t_cleanup *cleanup)
 
 	pid = fork();
 	if (pid < 0)
-		cleanup_error("fork", cleanup);
+		cleanup_error("fork", cleanup, EXIT_FAILURE);
 	if (pid == 0)
 	{
 		if (data->index == 0)

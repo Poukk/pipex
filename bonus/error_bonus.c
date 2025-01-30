@@ -15,12 +15,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-void	cleanup_error(char *error_msg, t_cleanup *cleanup_data)
+void	cleanup_error(char *error_msg, t_cleanup *cleanup_data, int status)
 {
 	if (cleanup_data && cleanup_data->ptr && cleanup_data->cleanup_fn)
 		cleanup_data->cleanup_fn(cleanup_data->ptr);
 	perror(error_msg);
-	exit(EXIT_FAILURE);
+	exit(status);
 }
 
 void	usage_error(void)

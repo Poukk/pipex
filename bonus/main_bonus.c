@@ -21,7 +21,7 @@ void	init(t_pipe_data *data, t_cleanup *cleanup, int argc, char *argv[])
 	data->argv = argv;
 	data->index = 0;
 	if (!data->pfd)
-		cleanup_error("malloc", NULL);
+		cleanup_error("malloc", NULL, EXIT_FAILURE);
 	reg_cleanup(cleanup, data->pfd, free_pipes);
 	setup_pipes(data->pfd, argc - 4);
 }

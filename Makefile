@@ -3,7 +3,7 @@ NAME = pipex
 SRCS =	$(SRCDIR)/main.c   \
 	$(SRCDIR)/error.c  \
 	$(SRCDIR)/exec.c   \
-	$(SRCDIR)/helper.c   \
+	$(SRCDIR)/helper.c \
 	$(SRCDIR)/env.c    \
 
 BONUS_SRCS =	$(BONUSDIR)/main_bonus.c   \
@@ -11,6 +11,7 @@ BONUS_SRCS =	$(BONUSDIR)/main_bonus.c   \
 		$(BONUSDIR)/exec_bonus.c   \
 		$(BONUSDIR)/helper_bonus.c \
 		$(BONUSDIR)/env_bonus.c    \
+		$(BONUSDIR)/exec_helper.c  \
 #---------------- Variables ----------------#
 CC = cc
 CFLAGS = -Wall -Wextra -Werror

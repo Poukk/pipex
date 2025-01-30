@@ -36,6 +36,8 @@ char	*find_path(char *cmd);
 
 /* exec */
 void	fork_and_execute(t_pipe_data *data, t_cleanup *cleanup);
+void	duplicate_std(int in_fd, int out_fd);
+int		is_exec(char *path);
 
 /* helper */
 int		wait_for_children(int num_children);
