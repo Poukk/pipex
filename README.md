@@ -1,3 +1,4 @@
+# Pipex
 ## Project scope
 
 The idea of this project is to understand how pipes work. Trying to copy the usage in shells of `|`. The mandatory part asks for the following structure:
